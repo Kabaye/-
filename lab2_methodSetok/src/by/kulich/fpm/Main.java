@@ -5,10 +5,10 @@ public class Main {
     private final static double B = 1D;
 
     private final static double MU0 = 0.9625;
-    private final static double SIGMA0 = 0.025 * Math.exp(-1F / 3F);
+    private final static double SIGMA0 = 0.025 * Math.exp(-1F / 3);
 
     private final static double MU1 = 0.0375;
-    private final static double SIGMA1 = -0.025 * Math.exp(1F / 3F);
+    private final static double SIGMA1 = -0.025 * Math.exp(1F / 3);
 
     private final static double h1 = 0.05;
     private final static int SIZE1 = (int) ((B - A) / h1) + 1;
@@ -40,11 +40,11 @@ public class Main {
         double[] betta = new double[size];
 
         y[0] = matrix[0][0];
-        alpha[0] = -matrix[0][1] / y[0];
-        betta[0] = matrix[0][size] / y[0];
+        alpha[1] = -matrix[0][1] / y[0];
+        betta[1] = matrix[0][size] / y[0];
 
         for (int i = 1; i < size - 1; i++) {
-            y[i] = matrix[i][i] + matrix[i][i - 1] * alpha[i - 1];
+            y[i] = matrix[i][i] + matrix[i][i - 1] * alpha[i-1];
             alpha[i] = -matrix[i][i + 1] / y[i];
             betta[i] = (matrix[i][size] - matrix[i][i - 1] * betta[i - 1]) / y[i];
         }
