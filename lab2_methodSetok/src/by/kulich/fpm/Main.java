@@ -27,7 +27,14 @@ public class Main {
 
         for (int i = 0; i < SIZE1; i++) {
             System.out.println("Y" + i + " = " + String.format("%.5f", answer1[i]));
+            System.out.println();
         }
+
+//        System.out.println();
+//
+//        for (int i = 0; i < SIZE2; i++) {
+//            System.out.println(/*"Y" + i + " = " + */String.format("%.5f", answer2[i]));
+//        }
 
         rungeError(answer2, SIZE2, answer1, SIZE1);
     }
@@ -44,20 +51,18 @@ public class Main {
         betta[1] = matrix[0][size] / y[0];
 
         for (int i = 1; i < size - 1; i++) {
-            y[i] = matrix[i][i] + matrix[i][i - 1] * alpha[i-1];
-            alpha[i] = -matrix[i][i + 1] / y[i];
-            betta[i] = (matrix[i][size] - matrix[i][i - 1] * betta[i - 1]) / y[i];
+            y[i] = matrix[i][i] + matrix[i][i - 1] * alpha[i];
+            alpha[i + 1] = -matrix[i][i + 1] / y[i];
+            betta[i + 1] = (matrix[i][size] - matrix[i][i - 1] * betta[i]) / y[i];
         }
-
-        y[size - 1] = matrix[size - 1][size - 1] + matrix[size - 1][size - 2] * alpha[size - 1];
-        betta[size - 1] = (matrix[size - 1][size] - matrix[size - 1][size - 2] * betta[size - 1]) / y[size - 1];
 
         /*Обратный ход*/
 
         double[] x = new double[size];
-        x[size - 1] = betta[size - 1];
-        for (int i = size - 2; i > 1; i--) {
-            x[i] = alpha[i] * x[i + 1] + betta[i];
+        x[size - 1] = (matrix[size - 1][size] - matrix[size - 1][size - 2] * betta[size - 1])
+                / (matrix[size - 1][size - 1] + matrix[size - 1][size - 2] * alpha[size - 1]);
+        for (int i = size - 2; i >= 0; i--) {
+            x[i] = alpha[i + 1] * x[i + 1] + betta[i + 1];
         }
 
         return x;
@@ -65,10 +70,17 @@ public class Main {
 
     public static void rungeError(double[] answer1, int size1, double[] answer2, int size2) {
         double max = 0;
-        for (int i = 0; i < size2; i++) {
-            max = Math.max(max, Math.abs(answer2[i] - answer1[2 * i]) / 3);
+        if (size2 < size1) {
+            for (int i = 0; i < size2; i++) {
+                max = Math.max(max, Math.abs(answer2[i] - answer1[2 * i]) / 3);
+            }
         }
 
+        if (size2 > size1) {
+            for (int i = 0; i < size1; i++) {
+                max = Math.max(max, Math.abs(answer2[i * 2] - answer1[i]) / 3);
+            }
+        }
         System.out.println("RungeError max(|answer1(xi)-answer2(xi)|/3)     =     " + max);
     }
 
@@ -84,11 +96,11 @@ public class Main {
         double xi = -1D + h;
         int i;
         for (i = 1; i < size - 1; i++) {
-            matrix[i][i - 1] = -1 / (h * h) - xi / (2 * h);
-            matrix[i][i] = 2 / h + Math.exp(xi / 3);
-            matrix[i][i + 1] = -1 / (h * h) + xi / (2 * h);
+            matrix[i][i - 1] = 1 / (h * h) + xi / (2 * h);
+            matrix[i][i] = -2 / (h * h) - Math.exp(xi / 3);
+            matrix[i][i + 1] = 1 / (h * h) - xi / (2 * h);
 
-            matrix[i][size] = xi / 2 + 1;
+            matrix[i][size] = -xi / 2 - 1;
 
             xi += h;
         }
